@@ -14,7 +14,6 @@ KEPT_COLUMNS = [
     "annual_inc",
     "dti",
     "verification_status",
-    "avg_fico",
     "earliest_cr_line",
     "total_acc",
     "open_acc",
@@ -24,11 +23,17 @@ KEPT_COLUMNS = [
     "revol_util",
     "revol_bal",
     "home_ownership",
-    "did_default",
+    "fico_range_low",
+    "fico_range_high",
+    "loan_status",
+    "issue_d",
 ]
 
 
 def drop_cols_w_too_many_nans(df: pd.DataFrame):
+    """
+    Drops columns which are at least 95% NaNs.
+    """
     too_many_nans_cols = []
     for col in df.columns:
         number_of_nans = df[col].isna().sum()
@@ -40,41 +45,107 @@ def drop_cols_w_too_many_nans(df: pd.DataFrame):
     return col_dropped_df
 
 
-def drop_unresolved_loans(df: pd.DataFrame):
+def filter_and_label_defaults(df: pd.DataFrame):
+    """
+    Drops all unresolved loans, and creates a new column which labels whether a borrower
+    defaulted or not.
+    """
     relevant_statuses_list = ["Fully Paid", "Charged Off"]
-    filtered_df = df[df["loan_status"].isin(relevant_statuses_list)].copy()
-    return filtered_df
-
-
-def flag_defaults(df: pd.DataFrame):  # to be used after unresolved loans are dropped
+    df = df[df["loan_status"].isin(relevant_statuses_list)].copy()
     df.loc[:, "did_default"] = df["loan_status"] == "Charged Off"
+    df = df.drop(columns="loan_status")
     return df
 
 
-def standardise_fico(df: pd.DataFrame):
-    df.loc[:, "avg_fico"] = (
-        df["fico_range_low"] + df["fico_range_high"]
-    ) / AVG_CONSTANT
+def add_avg_fico_col(df: pd.DataFrame):
+    """
+    Finds the average of the highest and lowest FICO scores of the borrower for simplicity.
+    """
+    df.loc[:, "avg_fico"] = (df["fico_range_low"] + df["fico_range_high"]) / 2
+    df = df.drop(columns=["fico_range_low", "fico_range_high"])
     return df
 
 
-def cr_date_to_acc_age(df: pd.DataFrame):
-    df.loc[:, "account_age"] = df["earliest_cr_line"]
+def convert_cr_date_to_acc_age(df: pd.DataFrame):
+    """
+    Finds age of credit account by finding the number of years between loan request
+    and earliest credit line. Creates a new column for age of account in years.
+    """
+    df["earliest_cr_line"] = pd.to_datetime(
+        df["earliest_cr_line"],
+        format="%b-%Y",
+        errors="coerce",
+    )
+    df["issue_d"] = pd.to_datetime(df["issue_d"], format="%b-%Y", errors="coerce")
+    df["credit_age_yrs"] = (
+        (df["issue_d"] - df["earliest_cr_line"]).dt.days / 365.25
+    ).round(2)
+    df = df.drop(columns=["earliest_cr_line", "issue_d"])
+    return df
+
+
+def encode_verification_status(df: pd.DataFrame):
+    """
+    Ordinally encodes verification status of a borrower's income, on a
+    scale of 0 (least good) to 2 (most good).
+    """
+    v_map = {"Not Verified": 0, "Verified": 1, "Source Verified": 2}
+    df.loc[:, "verification_status"] = df["verification_status"].map(v_map)
+    return df
+
+
+def encode_grade(df: pd.DataFrame):
+    """
+    Replaces grades from A-G with grades from 0-6. A = 0, B = 1, ..., G = 6.
+    """
+    grade_map = {g: i for i, g in enumerate("ABCDEFG")}
+    df.loc[:, "grade"] = df["grade"].map(grade_map)
+    return df
+
+
+def encode_term(df: pd.DataFrame):
+    """
+    Replaces "n months" with just n as an integer.
+    """
+    df.loc[:, "term"] = (
+        df["term"].str.replace(r"(\d+)\s*months?", r"\1", regex=True).astype(int)
+    )
+    return df
+
+
+def encode_home_ownership(df: pd.DataFrame):
+    """
+    Encodes home ownership ordinally on a scale of 0 (least good) to 2 (most good).
+    """
+    home_ownership_map = {"RENT": 0, "MORTGAGE": 1, "OWN": 2}
+    df.loc[:, "home_ownership"] = df["home_ownership"].map(home_ownership_map)
     return df
 
 
 def keep_select_cols(df: pd.DataFrame):
-    kept_df = df.drop(columns=[col for col in df.columns if col not in KEPT_COLUMNS])
-    return kept_df
+    """
+    Keeps selected columns and discards the rest.
+    """
+    return df[KEPT_COLUMNS]
+
+
+def test_pd(df: pd.DataFrame):
+    mykeptcols = ["loan_amnt", "grade", "term"]
+    mydf = df[mykeptcols]
+    return mydf
 
 
 def preprocess_20col_version(df: pd.DataFrame):
-    filtered_df = drop_cols_w_too_many_nans(df)
-    filtered_df = standardise_fico(filtered_df)
-    filtered_df = drop_unresolved_loans(filtered_df)
-    filtered_df = flag_defaults(filtered_df)
-    kept_df = keep_select_cols(filtered_df)
-    return kept_df
+    df = keep_select_cols(df)
+    df = drop_cols_w_too_many_nans(df)
+    df = filter_and_label_defaults(df)
+    df = add_avg_fico_col(df)
+    df = convert_cr_date_to_acc_age(df)
+    df = encode_verification_status(df)
+    df = encode_grade(df)
+    df = encode_term(df)
+    df = encode_home_ownership(df)
+    return df
 
 
 # next job is to collapse some columns down to one by some formula that takes in a bunch of numerical info about them
@@ -126,11 +197,4 @@ def further_clean(df: pd.DataFrame):
     cleaned_df.loc[:, "grade"] = cleaned_df["grade"].map(grade_map)
     # more stuff
 
-    return cleaned_df
-
-
-def clean_lc_df(df: pd.DataFrame):
-
-    flagged_df = flag_defaults(dropped_df)
-    cleaned_df = further_clean(flagged_df)
     return cleaned_df
