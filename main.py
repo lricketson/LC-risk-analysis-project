@@ -4,7 +4,6 @@ import re
 
 PERCENTAGE_CONSTANT = 100
 NAN_CUTOFF = 0.95
-AVG_CONSTANT = 2
 KEPT_COLUMNS = [
     "loan_amnt",
     "term",
@@ -135,7 +134,7 @@ def test_pd(df: pd.DataFrame):
     return mydf
 
 
-def preprocess_20col_version(df: pd.DataFrame):
+def preprocess_df(df: pd.DataFrame):
     df = keep_select_cols(df)
     df = drop_cols_w_too_many_nans(df)
     df = filter_and_label_defaults(df)
@@ -146,6 +145,10 @@ def preprocess_20col_version(df: pd.DataFrame):
     df = encode_term(df)
     df = encode_home_ownership(df)
     return df
+
+
+def count_nans_in_column(col: pd.Series):
+    return col.isna().sum()
 
 
 # next job is to collapse some columns down to one by some formula that takes in a bunch of numerical info about them
