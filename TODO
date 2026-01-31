@@ -1,17 +1,1 @@
-i am about to make a did_default flag in the df. the full set of loan statuses is this:
-{'Current', 'Fully Paid', 'Charged Off', 'Late (31-120 days)', 'In Grace Period', 'Late (16-30 days)'}
-
-all rows that are current are being dropped so we don't care about that
-i should count how many are current so i know how much data im throwing out
-fully paid means not default
-charged off means defaulted
-late (31-120 days), in grace period, and late (16-30 days) are grey areas. i can choose what to do about these.
-my decision on whether to treat them as default or not (since e.g. being late by 90+ days conventionally means
-default i think) may depend on how much of the data has those statuses.
-
-
-
-next to do:
-find descriptive statistics for continuous variables
-therefore i must make mean, sd, median functions or use built in np ones
-compare distributions of these continuous variables for defaulters vs non defaulters with graphs
+change set(fico_indices) to a named var like unique bands
