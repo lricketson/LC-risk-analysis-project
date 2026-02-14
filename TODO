@@ -1,1 +1,4 @@
 ### GENERAL
+
+- Calculate the average amount of money lost in each of these 2 scenarios: rejecting a borrower that would've paid back in full, and approving a borrower that will default (assuming they pay back none of the principal)
+- maybe do a confidence interval for the difference between these 2 quantities
