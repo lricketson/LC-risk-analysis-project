@@ -28,6 +28,30 @@ KEPT_COLUMNS = [
     "issue_d",
 ]
 
+SPECIALTY_KEPT_COLUMNS = [
+    "loan_amnt",
+    "term",
+    "int_rate",
+    "installment",
+    "grade",
+    "annual_inc",
+    "dti",
+    "verification_status",
+    "earliest_cr_line",
+    "total_acc",
+    "open_acc",
+    "delinq_2yrs",
+    "inq_last_6mths",
+    "pub_rec",
+    "revol_util",
+    "revol_bal",
+    "home_ownership",
+    "fico_range_low",
+    "fico_range_high",
+    "loan_status",
+    "issue_d",
+]
+
 
 def drop_cols_w_too_many_nans(df: pd.DataFrame):
     """
