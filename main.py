@@ -152,6 +152,13 @@ def keep_select_cols(df: pd.DataFrame):
     return df[KEPT_COLUMNS]
 
 
+def keep_specialty_select_cols(df: pd.DataFrame):
+    """
+    Keeps specialty selected columns and discards the rest.
+    """
+    return df[SPECIALTY_KEPT_COLUMNS]
+
+
 def test_pd(df: pd.DataFrame):
     mykeptcols = ["loan_amnt", "grade", "term"]
     mydf = df[mykeptcols]
@@ -160,6 +167,19 @@ def test_pd(df: pd.DataFrame):
 
 def preprocess_df(df: pd.DataFrame):
     df = keep_select_cols(df)
+    df = drop_cols_w_too_many_nans(df)
+    df = filter_and_label_defaults(df)
+    df = add_avg_fico_col(df)
+    df = convert_cr_date_to_acc_age(df)
+    df = encode_verification_status(df)
+    df = encode_grade(df)
+    df = encode_term(df)
+    df = encode_home_ownership(df)
+    return df
+
+
+def specialty_preprocess_df(df: pd.DataFrame):
+    df = keep_specialty_select_cols(df)
     df = drop_cols_w_too_many_nans(df)
     df = filter_and_label_defaults(df)
     df = add_avg_fico_col(df)

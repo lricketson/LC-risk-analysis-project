@@ -1,6 +1,6 @@
 ### What I was trying to do:
 
-build a random forest model to predict
+start finding expected loss for approve defaulter vs reject full payer
 
 ### What blocked me:
 
@@ -8,4 +8,4 @@ nothing, 1 hr was up
 
 ### Where to start next time:
 
-create new nb for rf
+in loss_analysis nb, calculate expected loss with formulas i wrote down
