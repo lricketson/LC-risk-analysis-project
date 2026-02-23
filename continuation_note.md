@@ -1,11 +1,11 @@
 ### What I was trying to do:
 
-start finding expected loss for approve defaulter vs reject full payer
+calibrate random forest for better results. also analyse how much money we're making using the random forest as predictor
 
 ### What blocked me:
 
-nothing, 1 hr was up
+nothing
 
 ### Where to start next time:
 
-in loss_analysis nb, calculate expected loss with formulas i wrote down
+analyse how much money we're making from RF, and also calibrate it. and undrstand why it's uncalibrated and why it's important to calibrate

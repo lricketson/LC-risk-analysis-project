@@ -50,6 +50,7 @@ SPECIALTY_KEPT_COLUMNS = [
     "fico_range_high",
     "loan_status",
     "issue_d",
+    "total_pymnt",
 ]
 
 
