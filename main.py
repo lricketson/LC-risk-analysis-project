@@ -192,6 +192,43 @@ def specialty_preprocess_df(df: pd.DataFrame):
     return df
 
 
+def prepare_ml_data(df: pd.DataFrame, scale=False):
+    """
+    Universally prepares X and y for machine learning.
+    Set scale=True for Logistic Regression, scale=False for Tree models.
+    """
+    from sklearn.model_selection import train_test_split
+    from sklearn.metrics import (
+        accuracy_score,
+        confusion_matrix,
+        classification_report,
+        roc_auc_score,
+    )
+    from sklearn.impute import SimpleImputer
+    import numpy as np
+    from sklearn.preprocessing import StandardScaler
+
+    # Find all positive and negative infinities in X and turn them into NaNs
+
+    X = df.drop(columns=["did_default", "total_pymnt", "net_pnl"])
+    y = df["did_default"]
+    X = X.replace([np.inf, -np.inf], np.nan)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
+    imputer = SimpleImputer(strategy="mean").set_output(transform="pandas")
+    X_train_processed = imputer.fit_transform(X_train)
+    X_test_processed = imputer.transform(X_test)
+    if scale:
+        scaler = StandardScaler().set_output(transform="pandas")
+        X_train_processed = scaler.fit_transform(
+            X_train_processed
+        )  # scale X because age=25 and income=50k would confuse the maths of error minimisation
+        X_test_processed = scaler.transform(X_test_processed)
+        # don't need to scale y because y is just 0s and 1s and that's how we want it to be
+    return X_train_processed, X_test_processed, y_train, y_test
+
+
 def count_nans_in_column(col: pd.Series):
     return col.isna().sum()
 
