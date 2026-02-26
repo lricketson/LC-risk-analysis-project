@@ -62,7 +62,7 @@ Given the portfolio's average loan metrics, the mathematical breakeven threshold
 
 - **Language:** Python 3.10.6
 - **Data Engineering & Manipulation:** Pandas, NumPy
-- **Machine Learning:** Scikit-Learn, XGBoost
+- **Machine Learning:** Scikit-Learn
 - **Statistical Inference:** SciPy, Statsmodels
 - **Data Visualisation:** Matplotlib, Seaborn
 - **Compute Environment:** Jupyter Notebooks, parallelised tree-building optimised for local hardware.
