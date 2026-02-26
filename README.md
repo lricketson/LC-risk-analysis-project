@@ -1,10 +1,10 @@
-# LendingClub Credit Risk Optimization & Statistical Inference
+# LendingClub Credit Risk Optimisation & Statistical Inference
 
 ## Executive Summary
 
-This project is an end-to-end quantitative risk pipeline and statistical analysis designed to optimize a consumer credit portfolio. Using a dataset of over 1.3 million historical LendingClub loans, the project combines rigorous statistical inference with machine learning to identify high-risk borrowers.
+This project is an end-to-end quantitative risk pipeline and statistical analysis designed to optimise a consumer credit portfolio. Using a dataset of over 1.3 million historical LendingClub loans, the project combines rigorous statistical inference with machine learning to identify high-risk borrowers.
 
-By engineering financial ratios and training a Gradient Boosting Classifier, the model mathematically optimizes the loan approval threshold. Against a baseline portfolio where all loans are approved, this model generates an additional **$43.04 Million in simulated net profit**.
+By engineering financial ratios and training a Gradient Boosting Classifier, the model mathematically optimises the loan approval threshold. Against a baseline portfolio where all loans are approved, this model generates an additional **$43.04 Million in simulated net profit**.
 
 ---
 
@@ -16,11 +16,11 @@ By engineering financial ratios and training a Gradient Boosting Classifier, the
 
 ## 2. Exploratory Data Analysis (EDA)
 
-Before modeling, the underlying distributions of the portfolio were analyzed:
+Before modelling, the underlying distributions of the portfolio were analysed:
 
 - **Descriptive Statistics:** Computed means, medians, and standard deviations for core continuous variables, revealing the impact of extreme outliers (e.g., $0 annual income entries), which were subsequently filtered.
 - **Overall Default Rate:** Established the baseline class imbalance of the dataset.
-- **Group Comparisons:** Visualized and compared the distributions of loan grades and FICO scores between defaulted and non-defaulted loans, proving that traditional risk strata exhibit significant overlap.
+- **Group Comparisons:** Visualised and compared the distributions of loan grades and FICO scores between defaulted and non-defaulted loans, proving that traditional risk strata exhibit significant overlap.
 - **Expected Value of a Borrower:** Calculated the expected profit from a full-paying borrower to be $3,014, and LGD of a defaulter to be $7,065
 
 ## 3. Statistical Inference
@@ -39,7 +39,7 @@ To establish a rigorous mathematical foundation for the predictive models, forma
 The machine learning architecture was built to evaluate both linear and non-linear risk topologies.
 
 - **Model Specification:**
-  - **Logistic Regression:** Used as an interpretable baseline. Coefficients were estimated via Maximum Likelihood Estimation (MLE). Analyzed feature importance through log-odds and odds ratios, confirming the plausibility of MLE assumptions post-outlier removal.
+  - **Logistic Regression:** Used as an interpretable baseline. Coefficients were estimated via Maximum Likelihood Estimation (MLE). Analysed feature importance through log-odds and odds ratios, confirming the plausibility of MLE assumptions post-outlier removal.
   - **Non-Linear Models:** Trained Random Forest and Gradient Boosting classifiers to capture complex, non-linear interactions (e.g., `loan_to_income` ratios).
 - **Validation Strategy:** Implemented a rigorous train/test split to ensure out-of-sample validity and prevent overfitting.
 - **Evaluation Metrics:** Models were evaluated holistically, not just on ranking ability:
@@ -64,5 +64,5 @@ Given the portfolio's average loan metrics, the mathematical breakeven threshold
 - **Data Engineering & Manipulation:** Pandas, NumPy
 - **Machine Learning:** Scikit-Learn, XGBoost
 - **Statistical Inference:** SciPy, Statsmodels
-- **Data Visualization:** Matplotlib, Seaborn
-- **Compute Environment:** Jupyter Notebooks, parallelized tree-building optimized for local hardware.
+- **Data Visualisation:** Matplotlib, Seaborn
+- **Compute Environment:** Jupyter Notebooks, parallelised tree-building optimised for local hardware.
